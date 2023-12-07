@@ -1,5 +1,10 @@
 <?php
     session_start();
+    function error($error) {
+      echo "<p style='color: red'>$error</p>";
+      unset($_SESSION['error']);
+    }
+
     if(!isset($_SESSION['userName'])) {
         header("Location: /main_files/login.php");
     } else {
@@ -8,8 +13,14 @@
         // Store the encryption key  
         $encryption_key = "rzeczINoga";
         // Use openssl_encrypt() function for encrypting the data
-        $iv = random_int(-10000000,100000);
+        $rand = random_int(-10000000,100000);
+        $iv = strval($rand);
+        $_SESSION['iv'] = $iv;
         $userName_encrypted = openssl_encrypt($userName, $ciphering_value, $encryption_key,0,$iv);
+    // } if ($_SESSION['tryLog'] == 0) {
+    //     unset($_SESSION['tryLog']);
+    //     $_SESSION['accLock'] = true;
+    //     header("Location: /ini/login_pass.ini.php");
     }
 ?>
 
@@ -34,6 +45,9 @@
                 <div class="center-wrap">
                   <div class="sekcja text-center">
                     <form action="/ini/login_pass.ini.php" method="post">
+                      <?php
+                        if (isset($_SESSION['error'])) error($_SESSION['error']);
+                      ?>
                     <h4 class="mb-4 pb-3">Witaj <?php echo $userName; unset($_SESSION['userName']) ?> podaj swoje hasło:
                     </h4>
                     <div class="form-grupa">
@@ -44,6 +58,12 @@
                     <button type="submit" class="btn mt-4" name="send">Zaloguj się</button>
                   </form>
                   <p class="mb-0 mt-4 text-center"><a href="#" class="link">Nie pamiętasz hasła?</a></p>
+                  <?php
+                    if (isset($_SESSION['unLock'])) {
+                      echo "<p class='mb-0 mt-4 text-center'><a class='link' href='email.php'>Odblokuj konto</a></p>";
+                      unset($_SESSION['unLock']);
+                    }
+                  ?>
                   </div>
                 </div>
               </div>

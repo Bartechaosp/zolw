@@ -32,7 +32,7 @@
                         if(isset($_SESSION['userName'])) echo $_SESSION['userName'];?></p>
                     <p class="wiadomosc mb-2 mt-3">ADMIN@CONTENTMANAGER.COM</p>
                     <button class="btn mb-2 mt-4" type="submit">ZMIEŃ HASŁO</button>
-                    <a href="ini/logout.ini.php"><button class="btn mb-5 mt-4">WYLOGUJ</button></a>
+                    <a href="/ini/logout.ini.php"><button class="btn mb-5 mt-4">WYLOGUJ</button></a>
                     
                 </div>
                 <div class="swiper-slide swiper-slide--two">

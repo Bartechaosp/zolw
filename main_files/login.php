@@ -2,9 +2,15 @@
   session_start();
 
   function error($error) {
+    if ($error == "unLock") {
+      $message = $error;
+      echo "<p style='color: green;'>Konto zostało odblokowane poprawnie!</p>"; 
+      unset($_SESSION['error']);
+    } else {
     $message = $error;
     echo "<p style='color: red;'>$message</p>"; 
     unset($_SESSION['error']);
+    }
   }
 
 ?>

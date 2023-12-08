@@ -1,27 +1,30 @@
 <?php
   session_start();
-  $passChange = false;
-  if (isset($_GET['type']) && isset($_SESSION['iv'])) {
-    $type = htmlspecialchars($_GET['type']);
-    $iv = $_SESSION['iv'];
-    $encrypted_type = openssl_decrypt($type, "AES-128-CTR", "rzeczINoga", 0, $iv);
-    if (isset($_SESSION['error'])) {
-      $error = $_SESSION['error'];
-    }
-    
-    if ($encrypted_type == "pass") {
-      $passChange = true;
-    } else header("Location: login.php");
-  }
+
+  //display an error
   function error($error) {
     echo "<p style='color: red';>$error</p>";
     unset($_SESSION['error']);
   }
+
+  //Check type of operation
+  if (isset($_GET['type']) && isset($_SESSION['iv'])) {
+    $type = htmlspecialchars($_GET['type']);
+    $iv = $_SESSION['iv'];
+    $encrypted_type = openssl_decrypt($type, "AES-128-CTR", "rzeczINoga", 0, $iv);
+    
+    if ($encrypted_type == "pass") {
+      $passChange = true;
+    } else if ($encrypted_type == "lock") {
+      $lock = true;
+    } else header("Location: login.php");
+  } else header("Location: login.php");
 ?>
+
 <html lang="pl">
 <head>
   <meta charset="utf-8" />
-  <title>Secure Content Manager - Email</title>
+  <title>Secure Content Manager - Zmiana hasła</title>
   <link rel="icon" type="image/x-icon" href="/rosources/img/ikona.ico">
   <link href="/rosources/style/style.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.9/css/unicons.css">
@@ -38,29 +41,26 @@
               <div class="karta-front">
                 <div class="center-wrap">
                   <div class="sekcja text-center">
-                      <?php
-                        if ($passChange) {
-                          echo "<form action='/ini/check_email.ini.php?type=$type' method='post'>";
-                          echo "<h4 class='mb-4 pb-3'>Zmiana hasła</h4>";
-                        } else {
-                          echo "<form action='/ini/check_email.ini.php' method='post'>";
-                          echo "<h4 class='mb-4 pb-3'>Odzyskiwanie konta</h4>";
-                        }
-                        if(isset($_SESSION['error'])) error($_SESSION['error']);
-                       ?>
+                    <?php echo "<form action='/ini/new_pass.ini.php?type=$type' method='post'>";?>
+                    <h4 class="mb-4 pb-3">Zmiana hasła
+                    </h4>
+                    <?php if(isset($_SESSION['error'])) error($_SESSION['error']); ?>
                     <div class="form-grupa">
-                      <input type="email" class="form-style" placeholder="Email" name="userEmail">
-                      <i class="input-icon uil uil-at"></i>
+                      <input type="password" class="form-style" placeholder="Hasło" name="pass">
+                      <i class="input-icon uil uil-lock-alt"></i>
                     </div>
-                    <button type="submit" class="btn mt-4" name="send">Wyślij wiadomość</button>
+                    <div class="form-grupa mt-2">
+                        <input type="password" class="form-style" placeholder="Powtórz hasło" name="passv2">
+                        <i class="input-icon uil uil-lock-alt"></i>
+                      </div>
+                    <button type="submit" class="btn mt-4" name="send">Zmień hasło</button>
                   </form>
-                  </div>
-                  <?php
-                    if (isset($_SESSION['lock'])) {
+                  <?php 
+                    if ($lock) {
                       echo "<p class='mb-0 mt-4 text-center'><a class='link' href='email.php'>Odblokuj konto</a></p>";
-                      unset($_SESSION['lock']);
                     }
                   ?>
+                  </div>
                 </div>
               </div>
             </div>

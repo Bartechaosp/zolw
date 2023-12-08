@@ -1,14 +1,24 @@
 <?php
   session_start();
-
+  
   function error($error) {
     echo "<p style='color: red';>$error</p>";
     unset($_SESSION['error']);
   }
-
+  //chech type of operation
+  if (isset($_GET['type']) && isset($_SESSION['iv'])) {
+    $type = htmlspecialchars($_GET['type']);
+    $iv = $_SESSION['iv'];
+    $encrypted_type = openssl_decrypt($type, "AES-128-CTR", "rzeczINoga", 0, $iv);
+    
+    if ($encrypted_type == "pass") {
+      $passChange = true;
+    } else header("Location: login.php");
+  }
+  //check if array is set
   if (isset($_SESSION['array'])) {
-    if (isset($_SESSION['userEmail'])) {
-      $userEmail = $_SESSION['userEmail'];
+    if (isset($_SESSION['email'])) {
+      $userEmail = $_SESSION['email'];
     }
     foreach ($_SESSION['array'] as $value) {
       echo $value;
@@ -36,7 +46,11 @@
             <div class="karta-front">
               <div class="center-wrap">
                 <div class="sekcja text-center">
-                  <form action="/ini/check_code.ini.php" method="post">
+                  <?php 
+                    if ($passChange) {
+                      echo "<form action='/ini/check_code.ini.php?type=$type' method='post'>";
+                    } else echo "<form action='/ini/check_code.ini.php' method='post'>";
+                  ?>
                   <h4 class="mb-3 pb-3">Weryfikacja
                   </h4>
                   <p class="wiadomosc">Na podany email została wysłana wiadomość z kodem</p>
@@ -48,7 +62,12 @@
                         <input id="input5" type="number" maxlength="1" name="input5"> <input type="hidden" name="hidden" value="">
                     </div>
                   </div>
-                  <button type="submit" class="btn mt-4" name="send">Zmień hasło</button>
+
+                  <?php 
+                    if ($passChange) {
+                      echo "<button type='submit' class='btn mt-4' name='send'>Zmień hasło</button>";
+                    } else echo "<button type='submit' class='btn mt-4' name='send'>Odblokuj konto</button>"
+                  ?>
                 </form>
                 </div>
               </div>

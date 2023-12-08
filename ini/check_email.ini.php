@@ -2,6 +2,16 @@
     session_start();
     //check if email is set
     if(isset($_POST['userEmail'])) {
+        //Check type of operation
+        if (isset($_GET['type']) && isset($_SESSION['iv'])) {
+            $type = htmlspecialchars($_GET['type']);
+            $iv = $_SESSION['iv'];
+            $encrypted_type = openssl_decrypt($type, "AES-128-CTR", "rzeczINoga", 0, $iv);
+            
+            if ($encrypted_type == "pass") {
+              $passChange = true;
+            } else header("Location: /main_files/login.php");
+          }
         //email validation
         $userEmail = htmlspecialchars($_POST['userEmail']);
         if(str_contains($userEmail, ".")) {
@@ -21,6 +31,16 @@
             while ($row = mysqli_fetch_row($result)) {
                 //fill the code array
                 if ($row[0] == $userEmail) {
+                    $success = true;
+                    break;
+                } else $success = false;
+            }
+
+            if ($success) {
+                $sql = "SELECT stan FROM users WHERE email = '$userEmail'";
+                $result = mysqli_query($conn, $sql);
+                while ($row = mysqli_fetch_row($result)) $state = $row[0];
+                if ($state && isset($passChange)) {
                     $codeTab = [];
                     for ($i = 0; $i < 5 ;$i++) {
                         $code = random_int(0,9);
@@ -28,21 +48,36 @@
                     }
                     $_SESSION['array'] = $codeTab;
                     $_SESSION['email'] = $_POST['userEmail'];
-                    header("Location: /main_files/check_code.php");
-                    mysqli_close($conn);
-                    break;
+                    header("Location: /main_files/check_code.php?type=$type");
+                    
+                } else if ($passChange) {
+                    $_SESSION['error'] = "Twoje konto zostało zablokowane. By zmienić hasło, należy je odblokować";
+                    $_SESSION['lock'] = true;
+                    header("Location: /main_files/email.php?type=$type");
                 } else {
-                    //send error message to email page
-                    $_SESSION['error'] = "Nie istnieje konto o podanym adresie email";
-                    header("Location: /main_files/email.php");
+                    $_SESSION['email'] = $userEmail;
+                    header("Location: /main_files/check_code.php");
                 }
-                mysqli_close($conn);
+            
+        } else {
+            //send error message to email page
+            $_SESSION['error'] = "Nie istnieje konto o podanym adresie email";
+            if ($passChange) {
+                header("Location: /main_files/email.php?type=$type");
+            } else {
+                header("Location: /main_files/email.php");
             }
+        }
+        mysqli_close($conn);
 
         } else {
             //send error message to email page
             $_SESSION['error'] = "Wprowadzono niepoprawny adres email";
-            header("Location: /main_files/email.php");
+            if ($passChange) {
+                header("Location: /main_files/email.php?type=$type");
+            } else {
+                header("Location: /main_files/email.php");
+            }
         }
     } else header("Location: /main_files/login.php");
 ?>

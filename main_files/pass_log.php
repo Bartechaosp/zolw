@@ -17,10 +17,7 @@
         $iv = strval($rand);
         $_SESSION['iv'] = $iv;
         $userName_encrypted = openssl_encrypt($userName, $ciphering_value, $encryption_key,0,$iv);
-    // } if ($_SESSION['tryLog'] == 0) {
-    //     unset($_SESSION['tryLog']);
-    //     $_SESSION['accLock'] = true;
-    //     header("Location: /ini/login_pass.ini.php");
+        $pswdChange = openssl_encrypt("pass", $ciphering_value, $encryption_key, 0, $iv);
     }
 ?>
 
@@ -57,8 +54,8 @@
                     </div>
                     <button type="submit" class="btn mt-4" name="send">Zaloguj się</button>
                   </form>
-                  <p class="mb-0 mt-4 text-center"><a href="#" class="link">Nie pamiętasz hasła?</a></p>
                   <?php
+                    echo "<p class='mb-0 mt-4 text-center'> <a href='/main_files/email.php?type=$pswdChange' class='link'>Nie pamiętasz hasła?</a></p>";
                     if (isset($_SESSION['unLock'])) {
                       echo "<p class='mb-0 mt-4 text-center'><a class='link' href='email.php'>Odblokuj konto</a></p>";
                       unset($_SESSION['unLock']);

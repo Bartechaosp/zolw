@@ -2,17 +2,15 @@
   session_start();
 
   function error($error) {
-    if ($error == "unLock") {
+    if ($error[0] == "success") {
       $message = $error;
-      echo "<p style='color: green;'>Konto zostało odblokowane poprawnie!</p>"; 
-      unset($_SESSION['error']);
+      echo "<p style='color: green;'>" . $error[1] . "</p>"; 
     } else {
-    $message = $error;
+    $message = $error[1];
     echo "<p style='color: red;'>$message</p>"; 
-    unset($_SESSION['error']);
     }
+    unset($_SESSION['error']);
   }
-
 ?>
 <html lang="pl">
 <head>
@@ -58,7 +56,6 @@
                         <button type="button" class="btn mt-4" id="send" onclick="sprawdzenie()">Zaloguj się</button>
                       </form>
                         <p class="mb-0 text-center"><a href="#" class="link">Oblokuj konto</a></p>
-                        <p class="mb-0 mt-4 text-center"><a href="#" class="link">Nie pamiętasz hasła?</a></p>
                       </div>
                     </div>
                   </div>

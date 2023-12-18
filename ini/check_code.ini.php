@@ -4,10 +4,13 @@
     if(isset($_SESSION['array'])) {
         $check = true;
         $passChange = false;
+        $array = $_SESSION['array'];
+        //unset($_SESSION['array']);
         //Check type of operation
         if (isset($_GET['type']) && isset($_SESSION['iv'])) {
             $type = htmlspecialchars($_GET['type']);
             $iv = $_SESSION['iv'];
+            //unset($_SESSION['iv']);
             $encrypted_type = openssl_decrypt($type, "AES-128-CTR", "rzeczINoga", 0, $iv);
             
             if ($encrypted_type == "pass") {
@@ -19,7 +22,7 @@
         for ($i = 0; $i < 5 ;$i++) {
 
             if (isset($_POST['input' . ($i + 1)]) && $_POST['input' . $i + 1] != ""){
-               if ($_SESSION['array'][$i] == $_POST['input' . $i + 1]) {
+               if ($array[$i] == $_POST['input' . $i + 1]) {
                 
                } else {
                 $check = false;
@@ -36,7 +39,8 @@
                 $_SESSION['error'] = "Proszę wpisać kod!";
                 if ($passChange) {
                     header("Location: /main_files/check_code.php?type=$type");
-                    $passChange = false;
+                    exit();
+                    //$passChange = false;
                     //$passChange = false;
                 } else  header("Location: /main_files/check_code.php");
                 break;
@@ -64,7 +68,7 @@
                 $_SESSION['error'] = ["success", "Twoje konto zostało odblokowane poprawnie. Możesz się zalogować lub zmienić hasło"];
                 header("Location: /main_files/login.php");
             }
-        } else if ($passChange) header("Location: /main_files/newPass.php?type=$type");
+        } else if ($check == true && $passChange) header("Location: /main_files/newPass.php?type=$type");
 
     } else header("Location: /main_files/login.php");
 ?>

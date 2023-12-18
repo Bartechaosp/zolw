@@ -25,7 +25,7 @@
                         $_SESSION['userName'] = $userLogin;
                         header("Location: /main_files/pass_log.php");
                     } else {
-                        $_SESSION['error'] = "Konto o podanym loginie nie istnieje";
+                        $_SESSION['error'] = ["error" ,"Konto o podanym loginie nie istnieje"];
                         header("Location: /main_files/login.php");
                     }
                 }

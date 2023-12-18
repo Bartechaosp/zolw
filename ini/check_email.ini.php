@@ -40,7 +40,7 @@
                 $sql = "SELECT stan FROM users WHERE email = '$userEmail'";
                 $result = mysqli_query($conn, $sql);
                 while ($row = mysqli_fetch_row($result)) $state = $row[0];
-                if ($state && isset($passChange)) {
+                if ($state == 1 && $passChange) {
                     $codeTab = [];
                     for ($i = 0; $i < 5 ;$i++) {
                         $code = random_int(0,9);
@@ -48,13 +48,19 @@
                     }
                     $_SESSION['array'] = $codeTab;
                     $_SESSION['email'] = $_POST['userEmail'];
-                    header("Location: /main_files/check_code.php?type=$type");
+                        header("Location: /main_files/check_code.php?type=$type");
                     
-                } else if ($passChange) {
+                } if ($state == 0 && $passChange) {
                     $_SESSION['error'] = "Twoje konto zostało zablokowane. By zmienić hasło, należy je odblokować";
                     $_SESSION['lock'] = true;
                     header("Location: /main_files/email.php?type=$type");
-                } else {
+                } if ($state == 0 && $passChange == false) {
+                    $codeTab = [];
+                    for ($i = 0; $i < 5 ;$i++) {
+                        $code = random_int(0,9);
+                        $codeTab[$i] = $code;
+                    }
+                    $_SESSION['array'] = $codeTab;
                     $_SESSION['email'] = $userEmail;
                     header("Location: /main_files/check_code.php");
                 }
@@ -79,5 +85,5 @@
                 header("Location: /main_files/email.php");
             }
         }
-    } else header("Location: /main_files/login.php");
+    } else echo "elo";//header("Location: /main_files/login.php");
 ?>

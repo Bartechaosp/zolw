@@ -1,13 +1,15 @@
 <?php 
   session_start();
 
+  unset($_SESSION['uId'], $_SESSION['ok'], $_SESSION['userName']);
+
   function error($error) {
     if ($error[0] == "success") {
       $message = $error;
       echo "<p style='color: green;'>" . $error[1] . "</p>"; 
     } else {
     $message = $error[1];
-    echo "<p style='color: red;'>$message</p>"; 
+    echo "<p style='color: red;'>$message</p>";
     }
     unset($_SESSION['error']);
   }
@@ -62,10 +64,10 @@
                   <div class="karta-back">
                     <div class="center-wrap">
                       <div class="sekcja text-center">
-                        <form action="" id="formularz1" method="post">
+                        <form action="/ini/register.ini.php" id="formularz1" method="post">
                           <h4 class="mt-2 mb-3 pb-3">Rejestracja</h4>
                           <div class="form-grupa">
-                            <input type="text" class="form-style" name="Login" placeholder="Login" id="loginrej">
+                            <input type="text" class="form-style" name="login" placeholder="login" id="loginrej">
                             <i class="input-icon uil uil-user"></i>
                           </div>
                           <div class="form-grupa mt-2">
@@ -76,7 +78,7 @@
                             <input type="password" class="form-style" name="haslo" placeholder="Hasło" id="haslorej">
                             <i class="input-icon uil uil-lock-alt"></i>
                           </div>
-                          <button type="button" class="btn mt-4" onclick="sprawdzenie()" id="send">Zarejestruj się</button>
+                          <button type="button" class="btn mt-4" onclick="sprawdzenie()" name="send" id="send">Zarejestruj się</button>
                         </form>
                       </div>
                     </div>
